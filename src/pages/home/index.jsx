@@ -1,51 +1,44 @@
-import { useEffect } from 'react'
+import { useState } from 'react';
 import './style.css'
-import Trash from '../../assets/trash1.svg'
-import api from '../../services/api'
+
+function verificarInputs() {
+  
+  const inputs = document.querySelectorAll("input");
+  const todosPreenchidos = Array.from(inputs).every(input => input.value.trim() !== "");
+
+  if (todosPreenchidos) {
+      inputs.forEach(input => input.value = "");
+      alert("Registration completed Successfully");
+  } else {
+      alert("Please, fill in all fields.");
+  }
+}
 
 function Home() {
 
-  let users = []
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [email, setEmail] = useState('');
 
-  async function getUsers() {
-    users = await api.get('/usuarios')
-  }
-
-  useEffect(() => {
-    getUsers()
-  }, [])
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aqui você pode enviar os dados para o backend
+    console.log({ name, age, email });
+  };
+  
   return (
     <>
       <div className='container'>
-        <form action="">
+        <form onSubmit={handleSubmit}>
           <h1>Cadastro de Usuário</h1>
-          <input placeholder="Insira o Nome" name="Name" type='text' />
-          <input placeholder="Informe a Idade" name="Ages" type='number' />
-          <input placeholder="Insira o E-mail" name="E-mail" type='email' />
-          <button type='button'>Cadastrar</button>
+          <input type='text' placeholder="Insira o Nome" value={name} onChange={(e) => setName(e.target.value)}/>
+          <input type='number' placeholder="Informe a Idade" value={age} onChange={(e) => setAge(e.target.value)}/>
+          <input type='email' placeholder="Insira o E-mail" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <button onClick={verificarInputs}>Cadastrar</button>
         </form>
-
-        {users.map(user => (
-
-          <div key={user.id} className="card">
-            <div>
-              <p>Nome: <span>{user.name}</span></p>
-              <p>Idade: <span>{user.age}</span></p>
-              <p>E-mail: <span>{user.email}</span></p>
-            </div>
-            <button>
-              <img src={Trash} />
-            </button>
-          </div>
-        ))}
-        <div>
-
-        </div>
-
       </div>
     </>
   )
 }
 
-export default Home
+export default Home;
